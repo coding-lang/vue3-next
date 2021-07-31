@@ -1683,6 +1683,7 @@ function baseCreateRenderer(
     const { patchFlag, shapeFlag } = n2
     // fast path
     if (patchFlag > 0) {
+      // TODO:通过Flag可以判断原来渲染是否有放key
       if (patchFlag & PatchFlags.KEYED_FRAGMENT) {
         // this could be either fully-keyed or mixed (some keyed some not)
         // presence of patchFlag means children are guaranteed to be arrays
@@ -1768,7 +1769,9 @@ function baseCreateRenderer(
   }
 
   const patchUnkeyedChildren = (
+    // 旧的NODES
     c1: VNode[],
+    // 新的NODES
     c2: VNodeArrayChildren,
     container: RendererElement,
     anchor: RendererNode | null,
@@ -1782,8 +1785,11 @@ function baseCreateRenderer(
     c2 = c2 || EMPTY_ARR
     const oldLength = c1.length
     const newLength = c2.length
+    // 取最小值遍历
     const commonLength = Math.min(oldLength, newLength)
     let i
+    // 没有key
+    // 从0位置开始依次patch比较
     for (i = 0; i < commonLength; i++) {
       const nextChild = (c2[i] = optimized
         ? cloneIfMounted(c2[i] as VNode)
@@ -1800,6 +1806,9 @@ function baseCreateRenderer(
         optimized
       )
     }
+    // 没有key
+    // 比较完成以后，有可能不是一一对应，那么则走下面的判断，旧的多则unmount ， 新的多则创建新的节点。
+    // 此操作的为VNODES
     if (oldLength > newLength) {
       // remove old
       unmountChildren(

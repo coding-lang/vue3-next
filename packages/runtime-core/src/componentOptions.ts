@@ -609,6 +609,7 @@ export function applyOptions(instance: ComponentInternalInstance) {
     resolveInjections(injectOptions, ctx, checkDuplicateProperties)
   }
 
+  // 取methods
   if (methods) {
     for (const key in methods) {
       const methodHandler = (methods as MethodOptions)[key]
